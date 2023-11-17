@@ -7,7 +7,7 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 
-import math, sys
+import math
 
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
@@ -38,7 +38,7 @@ RAND_RECHTS = 12
 FAHREN = 2
 SCANNEN_RECHTS = 31
 SCANNEN_LINKS = 32
-NICHTS = 0
+NICHTS = 4
 
 
 not_angle = 110
@@ -69,16 +69,14 @@ def reflection_detection():
 def check_end():
     if watch.time() > 90000 or Button.LEFT in ev3.buttons.pressed():
         ultra_motor.hold()
-        motor_left.hold()
-        motor_right.hold()
+        robot.stop()
         return NICHTS
-    print("Reee")
+    
     return None
 
 
 while True:
     zustand = check_end() or zustand
-    #print(zustand)
 
     if zustand == FAHREN:
         ultra_motor.run_target(us_speed, 0, wait=False)
@@ -125,5 +123,4 @@ while True:
     
     elif zustand == NICHTS:
         ultra_motor.run_target(us_speed, 0)
-        sys.exit()
-
+        break
