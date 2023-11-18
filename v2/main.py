@@ -89,12 +89,12 @@ while True:
     elif zustand == RAND_LINKS:
         robot.turn(not_angle)
         zustand = SCANNEN_RECHTS
-        us_distances = {}
+        us_distances.clear()
 
     elif zustand == RAND_RECHTS:
         robot.turn(-not_angle)
         zustand = SCANNEN_RECHTS
-        us_distances = {}
+        us_distances.clear()
 
     elif zustand == SCANNEN_RECHTS:
         ultra_motor.run(us_speed)
