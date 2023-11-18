@@ -41,7 +41,7 @@ SCANNEN_LINKS = 32
 NICHTS = 4
 
 
-not_angle = 110
+not_angle = 120
 reflection_limit = 30
 
 maxa_target = 90
@@ -49,7 +49,7 @@ mina_target = -90
 us_speed = 90
 us_distances = {}
 
-drive_speed = 350
+drive_speed = 300
 turn_speed = 0
 
 
