@@ -14,6 +14,8 @@ import math
 
 
 # Create your objects here.
+watch = StopWatch()
+
 ev3 = EV3Brick()
 motor_left = Motor(Port.A)
 motor_right = Motor(Port.B)
@@ -23,10 +25,9 @@ ultra_sensor = UltrasonicSensor(Port.S1)
 cs_right = ColorSensor(Port.S2)
 cs_left = ColorSensor(Port.S3)
 
-robot = DriveBase(motor_left, motor_right, 56, 87)
+robot = DriveBase(motor_left, motor_right, 56, 133)
 robot.settings(300, 1000)
 
-watch = StopWatch()
 
 # Write your program here.
 ev3.speaker.beep()
@@ -41,7 +42,7 @@ SCANNEN_LINKS = 32
 NICHTS = 4
 
 
-not_angle = 110
+not_angle = 120
 reflection_limit = 30
 
 maxa_target = 90
@@ -49,12 +50,11 @@ mina_target = -90
 us_speed = 90
 us_distances = {}
 
-drive_speed = 350
+drive_speed = 300
 turn_speed = 0
 
 
 zustand = SCANNEN_RECHTS
-watch.reset()
 
 
 def reflection_detection():
@@ -75,6 +75,11 @@ def check_end():
     return None
 
 
+while not Button.RIGHT in ev3.buttons.pressed():
+    pass
+
+watch.reset()
+
 while True:
     zustand = check_end() or zustand
 
@@ -89,16 +94,15 @@ while True:
     elif zustand == RAND_LINKS:
         robot.turn(not_angle)
         zustand = SCANNEN_RECHTS
-        us_distances = {}
+        us_distances.clear()
 
     elif zustand == RAND_RECHTS:
         robot.turn(-not_angle)
         zustand = SCANNEN_RECHTS
-        us_distances = {}
+        us_distances.clear()
 
     elif zustand == SCANNEN_RECHTS:
         ultra_motor.run(us_speed)
-        us_distances = {}
         us_distances[ultra_motor.angle()] = ultra_sensor.distance()
 
         if ultra_motor.angle() >= 90:
@@ -114,9 +118,19 @@ while True:
         if ultra_motor.angle() <= -90:
             angle = min(us_distances, key=us_distances.get)
             ultra_motor.stop()
-            turn_speed = angle * drive_speed / (math.pi * ((us_distances[angle] / 2) / math.sin(angle)) * 2 * angle / 180)
+            try:
+                turn_speed = angle * drive_speed / (math.pi * ((us_distances[angle] / 2) / math.sin(abs(angle))) * 2 * angle / 180)
+            except ZeroDivisionError:
+                if watch.time() > 5000:
+                    robot.turn(angle)
+                turn_speed = 0
+            if angle < 0:
+                turn_speed *= -1
+            turn_speed 
             while not watch.time() > 5000:
-                pass    
+                pass
+            #ev3.screen.print(turn_speed)
+            #ev3.screen.print(angle)
             zustand = FAHREN
 
         zustand = reflection_detection() or zustand
