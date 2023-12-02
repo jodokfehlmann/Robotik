@@ -129,6 +129,7 @@ while True:
             turn_speed 
             while not watch.time() > 5000:
                 pass
+            #test123
             #ev3.screen.print(turn_speed)
             #ev3.screen.print(angle)
             zustand = FAHREN
